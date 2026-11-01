@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8" />
+  <!-- [TUGAS 5] Judul halaman dinamis menampilkan nama barang -->
+  <title>Detail {{ produk.nama }} - InApp Inventory Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='images/apple-touch-icon.png') }}">
+  <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='images/favicon-32x32.png') }}">
+  <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='images/favicon-16x16.png') }}">
+  <script type="module" crossorigin src="{{ url_for('static', filename='js/main.js') }}"></script>
+  <link rel="stylesheet" crossorigin href="{{ url_for('static', filename='css/main.css') }}">
+</head>
+
+<body>
+  <div id="overlay" class="overlay"></div>
+
+  <!-- TOPBAR NAVIGATION (Layout Bawaan) -->
+  <nav id="topbar" class="navbar bg-white border-bottom fixed-top topbar px-3">
+    <button id="toggleBtn" class="d-none d-lg-inline-flex btn btn-light btn-icon btn-sm">
+      <i class="ti ti-layout-sidebar-left-expand"></i>
+    </button>
+
+    <!-- MOBILE TOGGLE BUTTON -->
+    <button id="mobileBtn" class="btn btn-light btn-icon btn-sm d-lg-none me-2">
+      <i class="ti ti-layout-sidebar-left-expand"></i>
+    </button>
+
+    <div>
+      <ul class="list-unstyled d-flex align-items-center mb-0 gap-2">
+        <!-- Notifikasi -->
+        <li>
+          <a class="position-relative btn-icon btn-sm btn-light btn rounded-circle" data-bs-toggle="dropdown" href="#" role="button">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icon-tabler-bell">
+              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+              <path d="M10 5a2 2 0 1 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2 -3v-3a7 7 0 0 1 4 -6" />
+              <path d="M9 17v1a3 3 0 0 0 6 0v-1" />
+            </svg>
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger mt-2 ms-n2">2</span>
+          </a>
+        </li>
+
+        <!-- User Info di Topbar -->
+        <li class="dropdown ms-2">
+          <a class="d-flex align-items-center text-dark text-decoration-none dropdown-toggle" href="#" data-bs-toggle="dropdown">
+            <img src="{{ url_for('static', filename='images/avatar-1.jpg') }}" alt="User Avatar" class="avatar avatar-sm rounded-circle me-2">
+            <span class="d-none d-md-inline fw-semibold small">Budi Santoso</span>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+            <li class="dropdown-header small text-muted">Akun Aktif</li>
+            <li><span class="dropdown-item-text fw-bold">Budi Santoso</span></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="{{ url_for('dashboard') }}"><i class="ti ti-home me-2"></i>Dashboard</a></li>
+            <li><a class="dropdown-item text-danger" href="{{ url_for('signin') }}"><i class="ti ti-logout me-2"></i>Keluar</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  
+  <!-- SIDEBAR (Selaras 100% Identik Secara Global) -->
+  <aside id="sidebar" class="sidebar">
+    <div class="logo-area">
+      <a href="{{ url_for('dashboard') }}" class="d-inline-flex">
+        <img src="data:image/svg+xml,%3csvg%20width='62'%20height='67'%20viewBox='0%200%2062%2067'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cpath%20d='M30.604%2066.378L0.00805664%2048.1582V35.7825L30.604%2054.0023V66.378Z'%20fill='%23302C4D'/%3e%3cpath%20d='M61.1996%2048.1582L30.604%2066.378V54.0023L61.1996%2035.7825V48.1582Z'%20fill='%23E66239'/%3e%3cpath%20d='M30.5955%200L0%2018.2198V30.5955L30.5955%2012.3757V0Z'%20fill='%23657E92'/%3e%3cpath%20d='M61.191%2018.2198L30.5955%200V12.3757L61.191%2030.5955V18.2198Z'%20fill='%23A3B2BE'/%3e%3cpath%20d='M30.604%2048.8457L0.00805664%2030.6259V18.2498L30.604%2036.47V48.8457Z'%20fill='%23302C4D'/%3e%3cpath%20d='M61.1996%2030.6259L30.604%2048.8457V36.47L61.1996%2018.2498V30.6259Z'%20fill='%23E66239'/%3e%3c/svg%3e" alt="" width="24">
+        <span class="logo-text ms-2"><img src="{{ url_for('static', filename='images/logo.svg') }}" alt=""></span>
+      </a>
+    </div>
+    <ul class="nav flex-column">
+      <li class="px-4 py-2"><small class="nav-text">Main</small></li>
+      <li><a class="nav-link" href="{{ url_for('dashboard') }}"><i class="ti ti-home"></i><span class="nav-text">Dashboard</span></a></li>
+      <li><a class="nav-link" href="{{ url_for('inventory') }}"><i class="ti ti-box-seam"></i><span class="nav-text">Inventory</span></a></li>
+      <li><a class="nav-link" href="{{ url_for('create_product') }}"><i class="ti ti-plus"></i><span class="nav-text">Add Product</span></a></li>
+      <li><a class="nav-link" href="{{ url_for('reports') }}"><i class="ti ti-receipt"></i><span class="nav-text">Reports</span></a></li>
+
+      <li class="px-4 pt-4 pb-2"><small class="nav-text">Account</small></li>
+      <li><a class="nav-link" href="{{ url_for('profil_redirect') }}"><i class="ti ti-user"></i><span class="nav-text">Profil Pengguna</span></a></li>
+      <li><a class="nav-link" href="{{ url_for('signin') }}"><i class="ti ti-login"></i><span class="nav-text">Log in</span></a></li>
+      <li><a class="nav-link" href="{{ url_for('signup') }}"><i class="ti ti-user-plus"></i><span class="nav-text">Sign up</span></a></li>
+    </ul>
+  </aside>
+
+  <!-- MAIN CONTENT (Layout Bawaan) -->
+  <main id="content" class="content py-10">
+    <div class="container-fluid">
+
+      <!-- Breadcrumb Navigasi -->
+      <div class="row mb-4">
+        <div class="col-12">
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-2">
+              <li class="breadcrumb-item"><a href="{{ url_for('dashboard') }}" class="text-decoration-none">Dashboard</a></li>
+              <li class="breadcrumb-item"><a href="{{ url_for('inventory') }}" class="text-decoration-none">Inventory</a></li>
+              <!-- [TUGAS 5] Dynamic Parameter <int:id> -->
+              <li class="breadcrumb-item active" aria-current="page">ID #{{ id }} - {{ produk.nama }}</li>
+            </ol>
+          </nav>
+          <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2">
+            <div>
+              <h1 class="h3 fw-bold mb-1">Detail Produk</h1>
+              <p class="text-muted mb-0">Informasi spesifikasi barang dan status ketersediaan inventaris gudang.</p>
+            </div>
+            <div>
+              <!-- [TUGAS 5] Tombol Kembali ke Inventory -->
+              <a href="{{ url_for('inventory') }}" class="btn btn-outline-secondary">
+                <i class="ti ti-arrow-left me-1"></i> Kembali ke Inventory
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- [TUGAS 5] KOMPONEN CARD BOOTSTRAP DETAIL BARANG (Nama Barang, Stok, Spesifikasi) -->
+      <div class="row g-4">
+        <!-- Kolom Kiri: Kartu Visual Gambar & Status Stok -->
+        <div class="col-lg-4 col-md-5">
+          <div class="card border shadow-sm text-center p-4">
+            <div class="card-body">
+              <div class="bg-light rounded p-4 mb-3 d-flex align-items-center justify-content-center" style="min-height: 200px;">
+                <img src="{{ url_for('static', filename='images/product-' ~ (id if id <= 2 else 1) ~ '.png') }}" 
+                     alt="{{ produk.nama }}" 
+                     class="img-fluid rounded" 
+                     style="max-height: 180px; object-fit: contain;">
+              </div>
+
+              <!-- [TUGAS 5] Tampilkan Nama Barang -->
+              <h4 class="card-title fw-bold mb-1">{{ produk.nama }}</h4>
+              <p class="text-muted small mb-3">Kode: <span class="fw-mono text-dark fw-bold">{{ produk.kode|default('PRD-00' ~ id) }}</span></p>
+
+              <!-- [TUGAS 5] Tampilkan Stok Barang -->
+              <div class="p-3 bg-light rounded border mb-3">
+                <div class="d-flex justify-content-between align-items-center">
+                  <span class="text-muted small fw-semibold">Jumlah Stok:</span>
+                  <span class="badge bg-success fs-6 px-3 py-2">
+                    <i class="ti ti-box me-1"></i> {{ produk.stok }} {{ produk.satuan|default('Pcs') }}
+                  </span>
+                </div>
+              </div>
+
+              <!-- Tombol Aksi & Kembali ke Inventory -->
+              <div class="d-grid gap-2">
+                <a href="{{ url_for('inventory') }}" class="btn btn-primary">
+                  <i class="ti ti-arrow-left me-1"></i> Kembali ke Inventory
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Kolom Kanan: Rincian Lengkap Barang & Panel Navigasi Uji Coba -->
+        <div class="col-lg-8 col-md-7">
+          <!-- Card Tabel Spesifikasi Barang -->
+          <div class="card border shadow-sm mb-4">
+            <div class="card-header bg-white py-3">
+              <h5 class="card-title mb-0 fw-semibold">
+                <i class="ti ti-list-details me-2 text-primary"></i>Spesifikasi Data Barang (ITEMS_DB)
+              </h5>
+            </div>
+            <div class="card-body p-0">
+              <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                  <tbody>
+                    <tr>
+                      <th class="ps-4 text-muted fw-semibold" style="width: 35%;">ID Produk</th>
+                      <td class="pe-4 fw-mono text-primary fw-bold">#{{ id }} (Integer Converter)</td>
+                    </tr>
+                    <tr>
+                      <th class="ps-4 text-muted fw-semibold">Nama Barang</th>
+                      <!-- [TUGAS 5] Render Nama Barang -->
+                      <td class="pe-4 fw-bold fs-6">{{ produk.nama }}</td>
+                    </tr>
+                    <tr>
+                      <th class="ps-4 text-muted fw-semibold">Sisa Stok</th>
+                      <!-- [TUGAS 5] Render Stok Barang -->
+                      <td class="pe-4">
+                        <span class="fw-bold text-success">{{ produk.stok }}</span>
+                        <span class="text-muted small">({{ produk.satuan|default('Unit') }})</span>
+                      </td>
+                    </tr>
+                    <tr>
+                      <th class="ps-4 text-muted fw-semibold">Estimasi Harga</th>
+                      <td class="pe-4 fw-semibold text-dark">{{ produk.harga|default('Hubungi Administrator') }}</td>
+                    </tr>
+                    <tr>
+                      <th class="ps-4 text-muted fw-semibold">Kategori Barang</th>
+                      <td class="pe-4">
+                        <span class="badge bg-primary-subtle text-primary border border-primary-subtle">
+                          {{ produk.kategori|default('Umum') }}
+                        </span>
+                      </td>
+                    </tr>
+                    <tr>
+                      <th class="ps-4 text-muted fw-semibold">Brand / Produsen</th>
+                      <td class="pe-4 text-secondary">{{ produk.brand|default('InApp Logistics') }}</td>
+                    </tr>
+                    <tr>
+                      <th class="ps-4 text-muted fw-semibold">Lokasi Penyimpanan</th>
+                      <td class="pe-4 text-secondary">
+                        <i class="ti ti-map-pin me-1 text-danger"></i> {{ produk.lokasi_rak|default('Gudang Utama') }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th class="ps-4 text-muted fw-semibold align-top pt-3">Deskripsi Barang</th>
+                      <td class="pe-4 text-secondary py-3">
+                        {{ produk.deskripsi|default('Tidak ada deskripsi tambahan.') }}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card Panel Pengujian Dynamic Route /produk/<int:id> -->
+          <div class="card border shadow-sm">
+            <div class="card-header bg-white py-3">
+              <h5 class="card-title mb-0 fw-semibold">
+                <i class="ti ti-flask me-2 text-info"></i>Uji Coba Route Converter: /produk/&lt;int:id&gt;
+              </h5>
+            </div>
+            <div class="card-body">
+              <p class="small text-muted mb-3">
+                Klik tombol di bawah ini untuk menguji converter integer pada rute Flask dan validasi <code>abort(404)</code> saat ID tidak ditemukan:
+              </p>
+              <div class="d-flex flex-wrap gap-2">
+                <a href="{{ url_for('detail_produk', id=1) }}" class="btn btn-sm {% if id == 1 %}btn-info text-dark fw-bold{% else %}btn-outline-info text-dark{% endif %}">
+                  <i class="ti ti-device-laptop me-1"></i> ID 1: Laptop Dell
+                </a>
+                <a href="{{ url_for('detail_produk', id=2) }}" class="btn btn-sm {% if id == 2 %}btn-info text-dark fw-bold{% else %}btn-outline-info text-dark{% endif %}">
+                  <i class="ti ti-mouse me-1"></i> ID 2: Mouse Wireless
+                </a>
+                <a href="{{ url_for('detail_produk', id=99) }}" class="btn btn-sm btn-outline-danger" title="ID 99 tidak ada di ITEMS_DB, memicu abort(404)">
+                  <i class="ti ti-alert-triangle me-1"></i> ID 99: Test 404 Error (abort)
+                </a>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- FOOTER -->
+      <div class="row mt-5">
+        <div class="col-12 text-center text-muted small">
+          <p class="mb-0">InApp Inventory Dashboard &bull; Praktikum Pemrograman Web (Tugas 5)</p>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</body>
+
+</html>
