@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+
+{% block title %}Cek Status Username - InApp Inventory Dashboard{% endblock %}
+
+{% block content %}
+  <!-- MAIN CONTENT: Cek Status Username -->
+  <main id="content" class="content py-10">
+    <div class="container-fluid">
+
+      <!-- Page Header -->
+      <div class="row mb-4">
+        <div class="col-12">
+          <h1 class="fs-3 mb-1">Cek Status Username</h1>
+          <p class="text-muted mb-0">Demonstrasi blok kondisi Jinja2: <code>{% raw %}{% if %} / {% elif %} / {% else %}{% endraw %}</code></p>
+        </div>
+      </div>
+
+      <!-- Form Pencarian -->
+      <div class="row mb-4">
+        <div class="col-12 col-md-6">
+          <div class="card">
+            <div class="card-body p-4">
+              <h5 class="card-title mb-3">Masukkan Username</h5>
+              <form action="{{ url_for('cek_status') }}" method="GET" class="d-flex gap-2">
+                <input type="text" name="username" class="form-control"
+                       placeholder="Coba: admin, petugas, abc123, atau kosong"
+                       value="{{ username_input }}" autofocus>
+                <button type="submit" class="btn btn-primary">Cek</button>
+              </form>
+              <p class="small text-muted mt-2">
+                Coba username: <code>admin</code> atau <code>petugas</code> (tersedia) •
+                username acak (sudah dipakai) • kosong (tidak valid)
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- LANGKAH 2: Blok Kondisi {% if %} dengan 3 cabang -->
+      {% if status %}
+      <div class="row">
+        <div class="col-12 col-md-8">
+
+          {# Kondisi 1: username kosong / format tidak valid #}
+          {% if status == 'tidak valid' %}
+          <div class="alert alert-danger d-flex align-items-center gap-3" role="alert">
+            <i class="ti ti-alert-circle fs-3"></i>
+            <div>
+              <h5 class="alert-heading mb-1">Format Tidak Valid</h5>
+              <p class="mb-0">Username <strong>"{{ username_input }}"</strong> tidak boleh kosong dan hanya boleh mengandung huruf, angka, atau underscore. Silakan coba lagi.</p>
+            </div>
+          </div>
+
+          {# Kondisi 2: username ada di USERS_DB → tersedia / cocok #}
+          {% elif status == 'tersedia' %}
+          <div class="alert alert-success d-flex align-items-center gap-3" role="alert">
+            <i class="ti ti-circle-check fs-3"></i>
+            <div>
+              <h5 class="alert-heading mb-1">Username Ditemukan!</h5>
+              <p class="mb-0">Username <strong>"{{ username_input }}"</strong> terdaftar di sistem. Anda dapat <a href="{{ url_for('cek_username', username=username_input) }}" class="alert-link">klik di sini</a> untuk melihat profil lengkapnya.</p>
+            </div>
+          </div>
+
+          {# Kondisi 3 (else): username tidak ada di DB → sudah dipakai / tidak ditemukan #}
+          {% else %}
+          <div class="alert alert-warning d-flex align-items-center gap-3" role="alert">
+            <i class="ti ti-user-x fs-3"></i>
+            <div>
+              <h5 class="alert-heading mb-1">Username Tidak Ditemukan</h5>
+              <p class="mb-0">Username <strong>"{{ username_input }}"</strong> tidak terdaftar di sistem InApp. Mungkin sudah digunakan akun lain atau belum terdaftar.</p>
+            </div>
+          </div>
+          {% endif %}
+
+          <!-- Tombol Demo Langsung -->
+          <div class="card mt-3">
+            <div class="card-header bg-white py-3">
+              <h5 class="mb-0 small fw-semibold"><i class="ti ti-flask me-2 text-info"></i>Demo 3 Kondisi Langsung</h5>
+            </div>
+            <div class="card-body d-flex flex-wrap gap-2">
+              <a href="{{ url_for('cek_status', username='admin') }}" class="btn btn-sm btn-success">
+                <i class="ti ti-circle-check me-1"></i> Cek "admin" → Tersedia
+              </a>
+              <a href="{{ url_for('cek_status', username='userXYZ') }}" class="btn btn-sm btn-warning">
+                <i class="ti ti-user-x me-1"></i> Cek "userXYZ" → Tidak Ditemukan
+              </a>
+              <a href="{{ url_for('cek_status', username='') }}" class="btn btn-sm btn-danger">
+                <i class="ti ti-alert-circle me-1"></i> Cek Kosong → Tidak Valid
+              </a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+      {% else %}
+      <!-- State awal sebelum form disubmit -->
+      <div class="row">
+        <div class="col-12 col-md-8">
+          <div class="card border-dashed">
+            <div class="card-body text-center py-5 text-muted">
+              <i class="ti ti-user-search fs-1 mb-3 d-block"></i>
+              <p class="mb-3">Masukkan username di atas untuk melihat demonstrasi 3 kondisi Jinja2.</p>
+              <div class="d-flex flex-wrap justify-content-center gap-2">
+                <a href="{{ url_for('cek_status', username='admin') }}" class="btn btn-sm btn-outline-success">Cek "admin"</a>
+                <a href="{{ url_for('cek_status', username='petugas') }}" class="btn btn-sm btn-outline-success">Cek "petugas"</a>
+                <a href="{{ url_for('cek_status', username='userXYZ') }}" class="btn btn-sm btn-outline-warning">Cek "userXYZ"</a>
+                <a href="{{ url_for('cek_status', username='') }}" class="btn btn-sm btn-outline-danger">Cek Kosong</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+
+    </div>
+  </main>
+{% endblock %}
+

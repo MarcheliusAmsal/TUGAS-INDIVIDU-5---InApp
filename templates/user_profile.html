@@ -1,87 +1,8 @@
-<!DOCTYPE html>
-<html lang="id">
+{% extends 'base.html' %}
 
-<head>
-  <meta charset="UTF-8" />
-  <!-- [TUGAS 5] Judul halaman dinamis menampilkan nama user -->
-  <title>Profil {{ user.nama }} - InApp Inventory Dashboard</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='images/apple-touch-icon.png') }}">
-  <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='images/favicon-32x32.png') }}">
-  <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='images/favicon-16x16.png') }}">
-  <script type="module" crossorigin src="{{ url_for('static', filename='js/main.js') }}"></script>
-  <link rel="stylesheet" crossorigin href="{{ url_for('static', filename='css/main.css') }}">
-</head>
+{% block title %}Profil {{ user.nama }} - InApp Inventory Dashboard{% endblock %}
 
-<body>
-  <div id="overlay" class="overlay"></div>
-
-  <!-- TOPBAR NAVIGATION (Layout Bawaan) -->
-  <nav id="topbar" class="navbar bg-white border-bottom fixed-top topbar px-3">
-    <button id="toggleBtn" class="d-none d-lg-inline-flex btn btn-light btn-icon btn-sm">
-      <i class="ti ti-layout-sidebar-left-expand"></i>
-    </button>
-
-    <!-- MOBILE TOGGLE BUTTON -->
-    <button id="mobileBtn" class="btn btn-light btn-icon btn-sm d-lg-none me-2">
-      <i class="ti ti-layout-sidebar-left-expand"></i>
-    </button>
-
-    <div>
-      <ul class="list-unstyled d-flex align-items-center mb-0 gap-2">
-        <!-- Notifikasi -->
-        <li>
-          <a class="position-relative btn-icon btn-sm btn-light btn rounded-circle" data-bs-toggle="dropdown" href="#" role="button">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icon-tabler-bell">
-              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-              <path d="M10 5a2 2 0 1 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2 -3v-3a7 7 0 0 1 4 -6" />
-              <path d="M9 17v1a3 3 0 0 0 6 0v-1" />
-            </svg>
-            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger mt-2 ms-n2">1</span>
-          </a>
-        </li>
-
-        <!-- User Info di Topbar -->
-        <li class="dropdown ms-2">
-          <a class="d-flex align-items-center text-dark text-decoration-none dropdown-toggle" href="#" data-bs-toggle="dropdown">
-            <img src="{{ url_for('static', filename='images/' ~ user.avatar) }}" alt="{{ user.nama }}" class="avatar avatar-sm rounded-circle me-2">
-            <span class="d-none d-md-inline fw-semibold small">{{ user.nama }}</span>
-          </a>
-          <ul class="dropdown-menu dropdown-menu-end shadow-sm">
-            <li class="dropdown-header small text-muted">Akun Aktif</li>
-            <li><span class="dropdown-item-text fw-bold">{{ user.nama }}</span></li>
-            <li><span class="dropdown-item-text small text-muted">{{ user.email }}</span></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="{{ url_for('dashboard') }}"><i class="ti ti-home me-2"></i>Dashboard</a></li>
-            <li><a class="dropdown-item text-danger" href="{{ url_for('signin') }}"><i class="ti ti-logout me-2"></i>Keluar</a></li>
-          </ul>
-        </li>
-      </ul>
-    </div>
-  </nav>
-
-  <!-- SIDEBAR (Selaras 100% Identik Secara Global) -->
-  <aside id="sidebar" class="sidebar">
-    <div class="logo-area">
-      <a href="{{ url_for('dashboard') }}" class="d-inline-flex">
-        <img src="data:image/svg+xml,%3csvg%20width='62'%20height='67'%20viewBox='0%200%2062%2067'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cpath%20d='M30.604%2066.378L0.00805664%2048.1582V35.7825L30.604%2054.0023V66.378Z'%20fill='%23302C4D'/%3e%3cpath%20d='M61.1996%2048.1582L30.604%2066.378V54.0023L61.1996%2035.7825V48.1582Z'%20fill='%23E66239'/%3e%3cpath%20d='M30.5955%200L0%2018.2198V30.5955L30.5955%2012.3757V0Z'%20fill='%23657E92'/%3e%3cpath%20d='M61.191%2018.2198L30.5955%200V12.3757L61.191%2030.5955V18.2198Z'%20fill='%23A3B2BE'/%3e%3cpath%20d='M30.604%2048.8457L0.00805664%2030.6259V18.2498L30.604%2036.47V48.8457Z'%20fill='%23302C4D'/%3e%3cpath%20d='M61.1996%2030.6259L30.604%2048.8457V36.47L61.1996%2018.2498V30.6259Z'%20fill='%23E66239'/%3e%3c/svg%3e" alt="" width="24">
-        <span class="logo-text ms-2"><img src="{{ url_for('static', filename='images/logo.svg') }}" alt=""></span>
-      </a>
-    </div>
-    <ul class="nav flex-column">
-      <li class="px-4 py-2"><small class="nav-text">Main</small></li>
-      <li><a class="nav-link" href="{{ url_for('dashboard') }}"><i class="ti ti-home"></i><span class="nav-text">Dashboard</span></a></li>
-      <li><a class="nav-link" href="{{ url_for('inventory') }}"><i class="ti ti-box-seam"></i><span class="nav-text">Inventory</span></a></li>
-      <li><a class="nav-link" href="{{ url_for('create_product') }}"><i class="ti ti-plus"></i><span class="nav-text">Add Product</span></a></li>
-      <li><a class="nav-link" href="{{ url_for('reports') }}"><i class="ti ti-receipt"></i><span class="nav-text">Reports</span></a></li>
-
-      <li class="px-4 pt-4 pb-2"><small class="nav-text">Account</small></li>
-      <li><a class="nav-link" href="{{ url_for('profil_redirect') }}"><i class="ti ti-user"></i><span class="nav-text">Profil Pengguna</span></a></li>
-      <li><a class="nav-link" href="{{ url_for('signin') }}"><i class="ti ti-login"></i><span class="nav-text">Log in</span></a></li>
-      <li><a class="nav-link" href="{{ url_for('signup') }}"><i class="ti ti-user-plus"></i><span class="nav-text">Sign up</span></a></li>
-    </ul>
-  </aside>
-
+{% block content %}
   <!-- MAIN CONTENT (Layout Bawaan) -->
   <main id="content" class="content py-10">
     <div class="container-fluid">
@@ -93,7 +14,6 @@
             <ol class="breadcrumb mb-2">
               <li class="breadcrumb-item"><a href="{{ url_for('dashboard') }}" class="text-decoration-none">Dashboard</a></li>
               <li class="breadcrumb-item">User</li>
-              <!-- [TUGAS 5] Parameter username dari Dynamic Route -->
               <li class="breadcrumb-item active" aria-current="page">{{ username }}</li>
             </ol>
           </nav>
@@ -111,7 +31,7 @@
         </div>
       </div>
 
-      <!-- [TUGAS 5] KOMPONEN CARD BOOTSTRAP VISUAL DATA USER (Nama, Role, Email) -->
+      <!-- KOMPONEN CARD BOOTSTRAP VISUAL DATA USER -->
       <div class="row g-4">
         <!-- Kolom Kiri: Kartu Identitas Pengguna -->
         <div class="col-lg-4 col-md-5">
@@ -123,23 +43,14 @@
                   <span class="visually-hidden">Online</span>
                 </span>
               </div>
-
-              <!-- [TUGAS 5] Menampilkan Variabel {{ user.nama }} -->
               <h4 class="card-title fw-bold mb-1">{{ user.nama }}</h4>
-
-              <!-- Menampilkan Variabel {{ username }} -->
               <p class="text-muted small mb-2">@{{ username }}</p>
-
-              <!-- [TUGAS 5] Menampilkan Variabel {{ user.role }} -->
               <div class="mb-3">
                 <span class="badge bg-primary px-3 py-2">{{ user.role }}</span>
               </div>
-
-              <!-- [TUGAS 5] Menampilkan Variabel {{ user.email }} -->
               <p class="card-text text-secondary mb-4 small">
                 <i class="ti ti-mail me-1"></i> {{ user.email }}
               </p>
-
               <div class="d-grid gap-2">
                 <a href="{{ url_for('dashboard') }}" class="btn btn-outline-primary btn-sm">
                   <i class="ti ti-arrow-left me-1"></i> Kembali ke Dashboard
@@ -152,7 +63,7 @@
           </div>
         </div>
 
-        <!-- Kolom Kanan: Detail Informasi Lengkap & Panel Demonstrasi Tugas 5 -->
+        <!-- Kolom Kanan: Detail Informasi Lengkap -->
         <div class="col-lg-8 col-md-7">
           <!-- Card Tabel Detail Data User -->
           <div class="card border shadow-sm mb-4">
@@ -171,19 +82,16 @@
                     </tr>
                     <tr>
                       <th class="ps-4 text-muted fw-semibold">Nama Lengkap</th>
-                      <!-- [TUGAS 5] Render {{ user.nama }} -->
                       <td class="pe-4 fw-bold">{{ user.nama }}</td>
                     </tr>
                     <tr>
                       <th class="ps-4 text-muted fw-semibold">Role / Jabatan</th>
-                      <!-- [TUGAS 5] Render {{ user.role }} -->
                       <td class="pe-4">
                         <span class="badge bg-info-subtle text-info border border-info-subtle">{{ user.role }}</span>
                       </td>
                     </tr>
                     <tr>
                       <th class="ps-4 text-muted fw-semibold">Alamat Email</th>
-                      <!-- [TUGAS 5] Render {{ user.email }} -->
                       <td class="pe-4">
                         <a href="mailto:{{ user.email }}" class="text-decoration-none">{{ user.email }}</a>
                       </td>
@@ -198,7 +106,7 @@
                     </tr>
                     <tr>
                       <th class="ps-4 text-muted fw-semibold">Status Akun</th>
-                      <td class="pe-4"><span class="badge bg-success">Aktif & Terdaftar</span></td>
+                      <td class="pe-4"><span class="badge bg-success">Aktif &amp; Terdaftar</span></td>
                     </tr>
                   </tbody>
                 </table>
@@ -206,24 +114,23 @@
             </div>
           </div>
 
-          <!-- Card Navigasi Uji Coba Demo Tugas 5 -->
+          <!-- Card Navigasi Uji Coba -->
           <div class="card border shadow-sm">
             <div class="card-header bg-white py-3">
               <h5 class="card-title mb-0 fw-semibold">
-                <i class="ti ti-flask me-2 text-success"></i>Panel Uji Coba Rute Tugas 5
+                <i class="ti ti-flask me-2 text-success"></i>Panel Uji Coba Rute
               </h5>
             </div>
             <div class="card-body">
               <p class="small text-muted mb-3">
                 Gunakan tautan cepat di bawah ini untuk menguji rute dinamis, redirect otomatis via <code>url_for</code>, dan integer converter:
               </p>
-
               <div class="row g-3">
                 <!-- Tes Dynamic Route & Redirect: /cek/<username> -->
                 <div class="col-md-6">
                   <div class="p-3 bg-light rounded border h-100">
-                    <span class="badge bg-primary mb-2">Dynamic Route 1: Validasi & Redirect</span>
-                    <p class="small text-muted mb-2">Tes pengecekan username & redirect via <code>url_for</code>:</p>
+                    <span class="badge bg-primary mb-2">Dynamic Route 1: Validasi &amp; Redirect</span>
+                    <p class="small text-muted mb-2">Tes pengecekan username &amp; redirect via <code>url_for</code>:</p>
                     <div class="d-flex flex-wrap gap-1">
                       <a href="{{ url_for('cek_username', username='admin') }}" class="btn btn-sm btn-outline-primary">
                         /cek/admin
@@ -242,7 +149,7 @@
                 <div class="col-md-6">
                   <div class="p-3 bg-light rounded border h-100">
                     <span class="badge bg-info text-dark mb-2">Dynamic Route 2: Integer Converter</span>
-                    <p class="small text-muted mb-2">Tes converter integer <code>&lt;int:id&gt;</code> & abort(404):</p>
+                    <p class="small text-muted mb-2">Tes converter integer <code>&lt;int:id&gt;</code> &amp; abort(404):</p>
                     <div class="d-flex flex-wrap gap-1">
                       <a href="{{ url_for('detail_produk', id=1) }}" class="btn btn-sm btn-outline-info text-dark">
                         /produk/1 (Laptop Dell)
@@ -263,15 +170,6 @@
         </div>
       </div>
 
-      <!-- FOOTER -->
-      <div class="row mt-5">
-        <div class="col-12 text-center text-muted small">
-          <p class="mb-0">InApp Inventory Dashboard &bull; Praktikum Pemrograman Web (Tugas 5)</p>
-        </div>
-      </div>
-
     </div>
   </main>
-</body>
-
-</html>
+{% endblock %}

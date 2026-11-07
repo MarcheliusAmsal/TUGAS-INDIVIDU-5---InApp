@@ -80,6 +80,27 @@ def cek_username(username):
         return redirect(url_for('detail_user', username=username))
     abort(404)
 
+# LANGKAH 2: Rute Cek Status Username — demonstrasi 3 kondisi Jinja2
+@app.route('/cek-status')
+def cek_status():
+    username_input = request.args.get('username', '').strip()
+
+    # Jika belum ada query sama sekali, tampilkan halaman kosong (state awal)
+    if 'username' not in request.args:
+        return render_template('cek_status.html', status=None, username_input='')
+
+    # Kondisi 1: format tidak valid (string kosong)
+    if not username_input:
+        status = 'tidak valid'
+    # Kondisi 2: username ditemukan di USERS_DB
+    elif username_input in USERS_DB:
+        status = 'tersedia'
+    # Kondisi 3 (else): username tidak ditemukan
+    else:
+        status = 'tidak ditemukan'
+
+    return render_template('cek_status.html', status=status, username_input=username_input)
+
 # Rute dinamis profil user & detail produk
 @app.route('/profil')
 def profil_redirect():
@@ -106,7 +127,7 @@ def detail_produk(id):
 def page_not_found(e):
     return render_template('404-error.html'), 404
 
-# Rute - rute ststis 
+# Rute - rute statis 
 @app.route('/', endpoint='dashboard')
 @app.route('/index.html', endpoint='index')
 def dashboard():
@@ -115,7 +136,8 @@ def dashboard():
 @app.route('/inventory')
 @app.route('/inventory.html')
 def inventory():
-    return render_template('inventory.html')
+    # LANGKAH 3: Kirim ITEMS_DB ke template agar bisa di-loop dengan {% for %}
+    return render_template('inventory.html', items=ITEMS_DB)
 
 @app.route('/create-product')
 @app.route('/create-product.html')
